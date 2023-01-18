@@ -1,0 +1,184 @@
+[
+  {
+    "level_": 0,
+    "message_": "Start JSON generation. Platform version: 26 min SDK version: arm64-v8a",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -353946152
+  },
+  {
+    "level_": 0,
+    "message_": "rebuilding JSON /Users/ayato/git/CameraCV/opencv/.cxx/Debug/6i6t1p34/arm64-v8a/android_gradle_build.json due to:",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 1867190353
+  },
+  {
+    "level_": 0,
+    "message_": "- expected json /Users/ayato/git/CameraCV/opencv/.cxx/Debug/6i6t1p34/arm64-v8a/android_gradle_build.json file is not present, will remove stale json folder",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 1399654997
+  },
+  {
+    "level_": 0,
+    "message_": "- missing previous command file /Users/ayato/git/CameraCV/opencv/.cxx/Debug/6i6t1p34/arm64-v8a/metadata_generation_command.txt, will remove stale json folder",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 527233811
+  },
+  {
+    "level_": 0,
+    "message_": "- command changed from previous, will remove stale json folder",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 1188283759
+  },
+  {
+    "level_": 0,
+    "message_": "removing stale contents from \u0027/Users/ayato/git/CameraCV/opencv/.cxx/Debug/6i6t1p34/arm64-v8a\u0027",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -534311774
+  },
+  {
+    "level_": 0,
+    "message_": "created folder \u0027/Users/ayato/git/CameraCV/opencv/.cxx/Debug/6i6t1p34/arm64-v8a\u0027",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 900187158
+  },
+  {
+    "level_": 0,
+    "message_": "executing cmake Executable : /Users/ayato/Library/Android/sdk/cmake/3.18.1/bin/cmake\narguments : \n-H/Users/ayato/git/CameraCV/opencv/libcxx_helper\n-DCMAKE_SYSTEM_NAME\u003dAndroid\n-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\n-DCMAKE_SYSTEM_VERSION\u003d26\n-DANDROID_PLATFORM\u003dandroid-26\n-DANDROID_ABI\u003darm64-v8a\n-DCMAKE_ANDROID_ARCH_ABI\u003darm64-v8a\n-DANDROID_NDK\u003d/Users/ayato/Library/Android/sdk/ndk/21.4.7075529\n-DCMAKE_ANDROID_NDK\u003d/Users/ayato/Library/Android/sdk/ndk/21.4.7075529\n-DCMAKE_TOOLCHAIN_FILE\u003d/Users/ayato/Library/Android/sdk/ndk/21.4.7075529/build/cmake/android.toolchain.cmake\n-DCMAKE_MAKE_PROGRAM\u003d/Users/ayato/Library/Android/sdk/cmake/3.18.1/bin/ninja\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/ayato/git/CameraCV/opencv/build/intermediates/cxx/Debug/6i6t1p34/obj/arm64-v8a\n-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003d/Users/ayato/git/CameraCV/opencv/build/intermediates/cxx/Debug/6i6t1p34/obj/arm64-v8a\n-DCMAKE_BUILD_TYPE\u003dDebug\n-B/Users/ayato/git/CameraCV/opencv/.cxx/Debug/6i6t1p34/arm64-v8a\n-GNinja\n-DANDROID_STL\u003dc++_shared\njvmArgs : \n\n",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 1843833867
+  },
+  {
+    "level_": 0,
+    "message_": "Executable : /Users/ayato/Library/Android/sdk/cmake/3.18.1/bin/cmake\narguments : \n-H/Users/ayato/git/CameraCV/opencv/libcxx_helper\n-DCMAKE_SYSTEM_NAME\u003dAndroid\n-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\n-DCMAKE_SYSTEM_VERSION\u003d26\n-DANDROID_PLATFORM\u003dandroid-26\n-DANDROID_ABI\u003darm64-v8a\n-DCMAKE_ANDROID_ARCH_ABI\u003darm64-v8a\n-DANDROID_NDK\u003d/Users/ayato/Library/Android/sdk/ndk/21.4.7075529\n-DCMAKE_ANDROID_NDK\u003d/Users/ayato/Library/Android/sdk/ndk/21.4.7075529\n-DCMAKE_TOOLCHAIN_FILE\u003d/Users/ayato/Library/Android/sdk/ndk/21.4.7075529/build/cmake/android.toolchain.cmake\n-DCMAKE_MAKE_PROGRAM\u003d/Users/ayato/Library/Android/sdk/cmake/3.18.1/bin/ninja\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/ayato/git/CameraCV/opencv/build/intermediates/cxx/Debug/6i6t1p34/obj/arm64-v8a\n-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003d/Users/ayato/git/CameraCV/opencv/build/intermediates/cxx/Debug/6i6t1p34/obj/arm64-v8a\n-DCMAKE_BUILD_TYPE\u003dDebug\n-B/Users/ayato/git/CameraCV/opencv/.cxx/Debug/6i6t1p34/arm64-v8a\n-GNinja\n-DANDROID_STL\u003dc++_shared\njvmArgs : \n\n",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 2102196042
+  },
+  {
+    "level_": 0,
+    "message_": "Exiting generation of /Users/ayato/git/CameraCV/opencv/.cxx/Debug/6i6t1p34/arm64-v8a/compile_commands.json.bin normally",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1863157765
+  },
+  {
+    "level_": 0,
+    "message_": "done executing cmake",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 875937508
+  },
+  {
+    "level_": 0,
+    "message_": "write command file /Users/ayato/git/CameraCV/opencv/.cxx/Debug/6i6t1p34/arm64-v8a/metadata_generation_command.txt",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1018946981
+  },
+  {
+    "level_": 0,
+    "message_": "JSON generation completed without problems",
+    "file_": "/Users/ayato/git/CameraCV/opencv/libcxx_helper/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1480956704
+  }
+]
