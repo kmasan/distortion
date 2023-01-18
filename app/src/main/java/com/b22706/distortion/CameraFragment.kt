@@ -1,4 +1,4 @@
-package com.b22706.cameracv
+package com.b22706.distortion
 
 import android.Manifest
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import com.b22706.cameracv.databinding.FragmentCameraBinding
+import com.b22706.distortion.databinding.FragmentCameraBinding
 import com.google.common.util.concurrent.ListenableFuture
 import pub.devrel.easypermissions.EasyPermissions
 

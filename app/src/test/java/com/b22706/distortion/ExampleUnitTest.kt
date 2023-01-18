@@ -1,4 +1,4 @@
-package com.b22706.cameracv
+package com.b22706.distortion
 
 import org.junit.Test
 

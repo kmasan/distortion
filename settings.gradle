@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "CameraCV"
+rootProject.name = "distortion"
 include ':app'
 include ':opencv'

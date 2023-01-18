@@ -11,7 +11,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.b22706.cameracv"
+        applicationId "com.b22706.distortion"
         minSdk 26
         targetSdk 33
         versionCode 1
