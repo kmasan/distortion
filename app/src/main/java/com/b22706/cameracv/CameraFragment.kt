@@ -53,13 +53,13 @@ class CameraFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
             bindPreview(cameraProvider)
         }, ContextCompat.getMainExecutor(requireActivity()))
     }
 
-    fun bindPreview(cameraProvider : ProcessCameraProvider) {
+    private fun bindPreview(cameraProvider : ProcessCameraProvider) {
         val preview : Preview = Preview.Builder()
             .build()
 
@@ -80,7 +80,6 @@ class CameraFragment : Fragment() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-//        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(File(...)).build()
 //        imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { imageProxy ->
 //            val rotationDegrees = imageProxy.imageInfo.rotationDegrees
 //            // insert your code here.
