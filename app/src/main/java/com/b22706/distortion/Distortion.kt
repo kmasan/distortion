@@ -37,17 +37,19 @@ class Distortion(): ImageAnalysis.Analyzer {
         Core.absdiff(mat, matPrevious, matOutput)
         matPrevious = mat
 
-        val rect: Rect =  Rect(10, 10, 100, 100)
-        val point: Point = Point(10, 10)
+//        val rect: Rect =  Rect(10, 10, 100, 100)
+//        val point: Point = Point(10, 10)
 
+        // テストで赤い四角を表示
         Imgproc.rectangle(matOutput, Rect(10, 10, 100, 100), Scalar(255.0, 0.0, 0.0))
 
         val bitmap = Bitmap.createBitmap(matOutput.cols(), matOutput.rows(), Bitmap.Config.ARGB_8888)
         Utils.matToBitmap(matOutput, bitmap)
         Log.d(LOG_NAME, "row ${matOrg.rows()}, cols ${matOrg.cols()}")
-        Log.d(LOG_NAME, "row ${image.height}, cols ${image.width}")
-        Log.d(LOG_NAME, "row ${bitmap.height}, cols ${bitmap.width}")
+//        Log.d(LOG_NAME, "row ${image.height}, cols ${image.width}")
+//        Log.d(LOG_NAME, "row ${bitmap.height}, cols ${bitmap.width}")
         _image.postValue(bitmap)
+        // close()しないと次の画像がこない
         image.close()
     }
 

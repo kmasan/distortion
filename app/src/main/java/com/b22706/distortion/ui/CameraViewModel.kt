@@ -27,9 +27,19 @@ class CameraViewModel(application: MainApplication) : ViewModel() {
 
     val distortion: Distortion = Distortion()
 
+    var width: Int = 1920
+    var height: Int = 1444
+
     fun startCamera(fragment: Fragment) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(app)
         val context: Context = app.applicationContext
+
+        fragment.view?.post {
+            width = fragment.requireView().width
+            height = fragment.requireView().height
+            Log.d(LOG_NAME,"w=$width, h=$height")
+        }
+
         cameraProviderFuture.addListener({
             try {
                 val cameraProvider = cameraProviderFuture.get()
@@ -39,7 +49,7 @@ class CameraViewModel(application: MainApplication) : ViewModel() {
                 val imageAnalysis = ImageAnalysis.Builder()
                     // RGBA出力が必要な場合は、以下の行を有効にしてください
                     // .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-                    .setTargetResolution(Size(1280, 720))
+                    .setTargetResolution(Size(width, height))
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
 

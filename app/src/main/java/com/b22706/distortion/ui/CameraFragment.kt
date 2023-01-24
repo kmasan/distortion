@@ -60,7 +60,6 @@ class CameraFragment : Fragment() {
 
         cameraViewModel.distortion.image.observe(viewLifecycleOwner){
             activity?.runOnUiThread(Runnable {
-                Log.d(LOG_NAME,"a")
                 binding.imageView.setImageBitmap(it)
             })
         }

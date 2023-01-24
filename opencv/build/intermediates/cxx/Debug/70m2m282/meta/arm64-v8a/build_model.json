@@ -29,10 +29,7 @@
     "intermediatesFolder": "/Users/susakishouta/Documents/github/distortion/opencv/build/intermediates/cxx/Debug/70m2m282",
     "isDebuggableEnabled": true,
     "validAbiList": [
-      "ARMEABI_V7A",
-      "ARM64_V8A",
-      "X86",
-      "X86_64"
+      "ARM64_V8A"
     ],
     "buildTargetSet": [
       "opencv_jni_shared"
@@ -133,6 +130,7 @@
         "rootBuildGradleFolder": "/Users/susakishouta/Documents/github/distortion",
         "sdkFolder": "/Users/susakishouta/Library/Android/sdk",
         "isBuildOnlyTargetAbiEnabled": true,
+        "ideBuildTargetAbi": "arm64-v8a,armeabi-v7a,armeabi",
         "isCmakeBuildCohabitationEnabled": false,
         "isPrefabEnabled": false
       },

@@ -1,1 +1,0 @@
-/Users/ayato/git/CameraCV/opencv/build/intermediates/cxx/Debug/6i6t1p34/obj/arm64-v8a
