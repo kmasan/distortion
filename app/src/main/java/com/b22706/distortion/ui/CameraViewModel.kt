@@ -49,7 +49,7 @@ class CameraViewModel(application: MainApplication) : ViewModel() {
                 val imageAnalysis = ImageAnalysis.Builder()
                     // RGBA出力が必要な場合は、以下の行を有効にしてください
                     // .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-                    .setTargetResolution(Size(width, height))
+                    .setTargetResolution(Size(1280, 720))
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
 

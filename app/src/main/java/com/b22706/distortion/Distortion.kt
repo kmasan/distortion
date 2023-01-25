@@ -1,16 +1,21 @@
 package com.b22706.distortion
 
-import android.graphics.Bitmap
+import android.graphics.*
 import android.graphics.Point
+import android.graphics.Rect
+import android.media.Image
 import android.util.Log
 import android.view.Surface
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.core.graphics.rotationMatrix
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
+import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
 
@@ -29,51 +34,16 @@ class Distortion(): ImageAnalysis.Analyzer {
 
     // ここに毎フレーム画像が渡される
     override fun analyze(image: ImageProxy) {
-        val matOrg: Mat = getMatFromImage(image)
-        val mat = fixMatRotation(matOrg)
-        val matOutput: Mat = Mat(mat!!.rows(), mat.cols(), mat.type())
+        val mat = imageProxyToMat(image)
+        val rMat = fixMatRotation(mat)
+        val bitmap = rMat.toBitmap()
 
-        if (matPrevious == null) matPrevious = mat
-        Core.absdiff(mat, matPrevious, matOutput)
-        matPrevious = mat
-
-//        val rect: Rect =  Rect(10, 10, 100, 100)
-//        val point: Point = Point(10, 10)
-
-        // テストで赤い四角を表示
-        Imgproc.rectangle(matOutput, Rect(10, 10, 100, 100), Scalar(255.0, 0.0, 0.0))
-
-        val bitmap = Bitmap.createBitmap(matOutput.cols(), matOutput.rows(), Bitmap.Config.ARGB_8888)
-        Utils.matToBitmap(matOutput, bitmap)
-        Log.d(LOG_NAME, "row ${matOrg.rows()}, cols ${matOrg.cols()}")
-//        Log.d(LOG_NAME, "row ${image.height}, cols ${image.width}")
-//        Log.d(LOG_NAME, "row ${bitmap.height}, cols ${bitmap.width}")
         _image.postValue(bitmap)
         // close()しないと次の画像がこない
         image.close()
     }
 
-    // image to Mat
-    private fun getMatFromImage(image: ImageProxy): Mat {
-        /* https://stackoverflow.com/questions/30510928/convert-android-camera2-api-yuv-420-888-to-rgb */
-        val yBuffer: ByteBuffer = image.planes[0].buffer
-        val uBuffer: ByteBuffer = image.planes[1].buffer
-        val vBuffer: ByteBuffer = image.planes[2].buffer
-        val ySize: Int = yBuffer.remaining()
-        val uSize: Int = uBuffer.remaining()
-        val vSize: Int = vBuffer.remaining()
-        val nv21 = ByteArray(ySize + uSize + vSize)
-        yBuffer.get(nv21, 0, ySize)
-        vBuffer.get(nv21, ySize, vSize)
-        uBuffer.get(nv21, ySize + vSize, uSize)
-        val yuv = Mat(image.height + image.height / 2, image.width, CvType.CV_8UC1)
-        yuv.put(0, 0, nv21)
-        val mat = Mat()
-        Imgproc.cvtColor(yuv, mat, Imgproc.COLOR_YUV2RGB_NV21, 3)
-        return mat
-    }
-
-    private fun fixMatRotation(matOrg: Mat): Mat? {
+    private fun fixMatRotation(matOrg: Mat): Mat {
         val mat: Mat
         val rotation: Int = Surface.ROTATION_0
         when (rotation) {
@@ -94,6 +64,25 @@ class Distortion(): ImageAnalysis.Analyzer {
             }
         }
         return mat
+    }
+
+    fun imageProxyToMat(image: ImageProxy): Mat {
+        Log.d(LOG_NAME,"${image.format}")
+        val yuvType = Imgproc.COLOR_YUV2RGBA_NV21
+        val mat = Mat(image.height + image.height / 2, image.width, CvType.CV_8UC1)
+        val data = ByteArray(image.planes[0].buffer.capacity() + image.planes[1].buffer.capacity())
+        image.planes[0].buffer.get(data, 0, image.planes[0].buffer.capacity())
+        image.planes[1].buffer.get(data, image.planes[0].buffer.capacity(), image.planes[1].buffer.capacity())
+        mat.put(0, 0, data)
+        val matRGBA = Mat()
+        Imgproc.cvtColor(mat, matRGBA, yuvType)
+        return matRGBA
+    }
+
+    fun Mat.toBitmap(): Bitmap {
+        val bmp = Bitmap.createBitmap(cols(), rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(this, bmp)
+        return bmp
     }
 
 }
