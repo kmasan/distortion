@@ -9,8 +9,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.opencv.android.Utils
 import org.opencv.core.*
+import org.opencv.core.Point
 import org.opencv.imgproc.Imgproc
 import java.util.concurrent.TimeUnit
+import kotlin.math.sin
 
 
 class Distortion(): ImageAnalysis.Analyzer {
@@ -19,8 +21,6 @@ class Distortion(): ImageAnalysis.Analyzer {
         val LOG_NAME: String = "Distortion"
     }
 
-    private var matPrevious: Mat? = null
-
     // 出力する画像
     private val _image =
         MutableLiveData<Bitmap>(Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888))
@@ -28,14 +28,41 @@ class Distortion(): ImageAnalysis.Analyzer {
 
     // ここに毎フレーム画像が渡される
     override fun analyze(image: ImageProxy) {
+        try {
+            val mat = imageProxyToMat(image)
+            val rMat = fixMatRotation(mat)
+            val dstMat = distortImage(rMat, 5)
+            val bitmap = dstMat.toBitmap()
 
-        val mat = imageProxyToMat(image)
-        val rMat = fixMatRotation(mat)
-        val bitmap = rMat.toBitmap()
+            _image.postValue(bitmap)
+        } finally {
+            image.close()
+        }
+    }
 
-        _image.postValue(bitmap)
-        // close()しないと次の画像がこない
-        image.close()
+    fun distortImage(image: Mat, strength: Int): Mat {
+        val result = Mat()
+        val mapX = Mat()
+        val mapY = Mat()
+        val size = Size(image.cols().toDouble(), image.rows().toDouble())
+
+        mapX.create(size, CvType.CV_32FC1)
+        mapY.create(size, CvType.CV_32FC1)
+
+        for (i in 0 until image.rows()) {
+            for (j in 0 until image.cols()) {
+                val x = j.toDouble()
+                val y = i.toDouble()
+                val dx = x + strength * sin(y/10.0)
+                val dy = y + strength * sin(x/10.0)
+                mapX.put(i, j, dx)
+                mapY.put(i, j, dy)
+            }
+        }
+
+        Imgproc.remap(image, result, mapX, mapY, Imgproc.INTER_LINEAR, Core.BORDER_CONSTANT, Scalar.all(0.0))
+
+        return result
     }
 
     private fun fixMatRotation(matOrg: Mat): Mat {
