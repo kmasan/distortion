@@ -10,10 +10,13 @@ import org.opencv.core.Mat
 
 class MainApplication: Application() {
 
+    lateinit var audioSensor: AudioSensor
 
     override fun onCreate() {
         super.onCreate()
 
+        audioSensor = AudioSensor(applicationContext)
+        // audioSensor.start()
 
     }
 
