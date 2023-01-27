@@ -27,21 +27,13 @@ class Distortion(): ImageAnalysis.Analyzer {
     val image: LiveData<Bitmap> = _image
 
     // ここに毎フレーム画像が渡される
-
-    private var lastAnalyzedTimestamp = 0L
     override fun analyze(image: ImageProxy) {
 
-        val currentTimestamp = System.currentTimeMillis()
-        // Analyze only if 1 second has passed since the last analysis
-        if (currentTimestamp - lastAnalyzedTimestamp >= TimeUnit.MILLISECONDS.toMillis(100)) {
-            val mat = imageProxyToMat(image)
-            val rMat = fixMatRotation(mat)
-            val bitmap = rMat.toBitmap()
+        val mat = imageProxyToMat(image)
+        val rMat = fixMatRotation(mat)
+        val bitmap = rMat.toBitmap()
 
-            _image.postValue(bitmap)
-            lastAnalyzedTimestamp = currentTimestamp
-        }
-
+        _image.postValue(bitmap)
         // close()しないと次の画像がこない
         image.close()
     }
