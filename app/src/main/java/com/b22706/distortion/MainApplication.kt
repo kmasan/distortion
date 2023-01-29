@@ -16,7 +16,7 @@ class MainApplication: Application() {
         super.onCreate()
 
         audioSensor = AudioSensor(applicationContext)
-        // audioSensor.start()
+        // audioSensor.start(10, AudioSensor.RECORDING_DB)
 
     }
 

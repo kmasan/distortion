@@ -21,6 +21,9 @@ class AudioSensor(private val context: Context) {
 
     companion object {
         const val LOG_NAME: String = "AudioSensor"
+        const val RECORDING_NORMAL = 0 // 特に処理はしない
+        const val RECORDING_DB = 1 // volumeに音量を記載
+        const val RECORDING_FREQUENCY = 2 // 周波数解析
     }
 
     private val sampleRate = 8000 // 標準：44100
@@ -37,7 +40,8 @@ class AudioSensor(private val context: Context) {
     private var volume = 0
     fun getVolume() = volume
 
-    fun start() {
+    // period: オーディオ処理のインターバル, recordingMode: 処理の種類（定数として宣言済み）
+    fun start(period: Int, recordingMode: Int) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.RECORD_AUDIO
@@ -55,7 +59,11 @@ class AudioSensor(private val context: Context) {
         audioRecord.startRecording()
 
         isRecoding = true
-        if (!run) recodingDB(10)
+        if (!run) when(recordingMode){
+            RECORDING_NORMAL -> recoding(period)
+            RECORDING_DB -> recodingDB(period)
+            RECORDING_FREQUENCY -> recodingFrequency(period)
+        }
     }
 
     // 8000Hzでこの処理を回すのはやばいんで指定period[ms]ごとに処理
@@ -132,10 +140,10 @@ class AudioSensor(private val context: Context) {
 //                val targetFrequency = 10000 // 特定の周波数（Hz）
 //                val index = (targetFrequency * fft.size / sampleRate).toInt()
 //                val amplitude = sqrt((fft[index] * fft[index] + fft[index + 1] * fft[index + 1]).toDouble())
-                //音量が最大の周波数とその音量の解析
-                var maxAmplitude = 0.0 // 最大音量
-                var maxIndex = 0 // 最大音量が入っているリスト番号
-                // 最大音量が入っているリスト番号を走査
+                //振幅が最大の周波数とその振幅値の解析
+                var maxAmplitude = 0.0 // 最大振幅
+                var maxIndex = 0 // 最大振幅が入っているリスト番号
+                // 最大振幅が入っているリスト番号を走査
                 for(index in IntStream.range(0, fftBuffer.size - 1)){
                     val tmp = sqrt((fftBuffer[index] * fftBuffer[index] + fftBuffer[index + 1] * fftBuffer[index + 1]))
                     if (maxAmplitude < tmp){
@@ -143,7 +151,7 @@ class AudioSensor(private val context: Context) {
                         maxIndex = index
                     }
                 }
-                // 最大音量周波数
+                // 最大振幅の周波数
                 val maxFrequency: Int = (maxIndex * sampleRate / fftBuffer.size)
                 //Log.d(LOG_NAME, "maxFrequency = $maxFrequency")
 
