@@ -54,7 +54,7 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        cameraViewModel.distortion.audioSensor.start()
+        cameraViewModel.startAudio()
         cameraViewModel.startCamera(this)
 
         cameraViewModel.distortion.image.observe(viewLifecycleOwner){

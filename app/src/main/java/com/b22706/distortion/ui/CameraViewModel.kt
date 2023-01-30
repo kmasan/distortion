@@ -30,6 +30,9 @@ class CameraViewModel(activity: MainActivity) : ViewModel() {
     var width: Int = 1920
     var height: Int = 1444
 
+    fun startAudio() {
+        audioSensor.start(10, AudioSensor.RECORDING_DB)
+    }
     fun startCamera(fragment: Fragment) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
         val context: Context = activity
