@@ -50,6 +50,11 @@ class CameraFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        cameraViewModel.startAudio()
+    }
+
     override fun onPause() {
         super.onPause()
         cameraViewModel.distortion.audioSensor.stop()

@@ -28,14 +28,16 @@ class Distortion(val audioSensor: AudioSensor): ImageAnalysis.Analyzer {
     private val _image =
         MutableLiveData<Bitmap>(Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888))
     val image: LiveData<Bitmap> = _image
+    private var willDistortion: Boolean = true
+    private var timeStamp = System.currentTimeMillis()
 
     // ここに毎フレーム画像が渡される
     override fun analyze(image: ImageProxy) {
         try {
             val mat = imageProxyToMat(image)
             val rMat = fixMatRotation(mat)
-            Log.d(LOG_NAME,"audio db = ${audioSensor.getVolume()}")
-            Log.d(LOG_NAME, "distortionLevel = ${getDistortionLevel(audioSensor.getVolume())}")
+//            Log.d(LOG_NAME,"audio db = ${audioSensor.getVolume()}")
+//            Log.d(LOG_NAME, "distortionLevel = ${getDistortionLevel(audioSensor.getVolume())}")
             // 音量によって画像処理，音が一定以下なら何もしない．
             shouldDistortImage(rMat.clone())
 
@@ -47,11 +49,14 @@ class Distortion(val audioSensor: AudioSensor): ImageAnalysis.Analyzer {
     }
 
     private fun shouldDistortImage(mat: Mat) {
-        if (getDistortionLevel(audioSensor.getVolume()) != 0 && toggleBoolean()){
+        val level = getDistortionLevel(audioSensor.getVolume())
+        if (level != 0 && toggleBoolean()){
             thread {
-                val dstMat = distortImage(mat, getDistortionLevel(audioSensor.getVolume()))
+                Log.d(LOG_NAME, "save image")
+                val dstMat = distortImage(mat, level)
+                Log.d(LOG_NAME, "created dstImage")
                 ImageManager.saveImage(
-                    "level${getDistortionLevel(audioSensor.getVolume())}",
+                    "level${level}",
                     dstMat.toBitmap()
                 )
             }
@@ -59,13 +64,18 @@ class Distortion(val audioSensor: AudioSensor): ImageAnalysis.Analyzer {
     }
 
     private fun toggleBoolean(): Boolean {
-        var value = true
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                value = !value
-            }
-        }, 1000)
-        return value
+        val now = System.currentTimeMillis()
+        // 一定時間経過したら
+        if (now - timeStamp > 1000) {
+            willDistortion = true
+            timeStamp = now
+        }
+        return if (willDistortion){
+            willDistortion = false
+            return true
+        } else {
+            return false
+        }
     }
 
     private fun distortImage(image: Mat, strength: Int): Mat {
