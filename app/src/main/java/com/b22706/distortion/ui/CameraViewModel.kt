@@ -11,28 +11,28 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
+import com.b22706.distortion.AudioSensor
 import com.b22706.distortion.Distortion
-import com.b22706.distortion.MainApplication
-import com.google.common.util.concurrent.ListenableFuture
+import com.b22706.distortion.MainActivity
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class CameraViewModel(application: MainApplication) : ViewModel() {
+class CameraViewModel(activity: MainActivity) : ViewModel() {
 
     companion object {
         val LOG_NAME: String = "CameraViewModel"
     }
-    val app: MainApplication = application
-
-    val distortion: Distortion = Distortion()
+    val activity: MainActivity = activity
+    val audioSensor: AudioSensor = AudioSensor(activity)
+    val distortion: Distortion = Distortion(audioSensor)
 
     var width: Int = 1920
     var height: Int = 1444
 
     fun startCamera(fragment: Fragment) {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(app)
-        val context: Context = app.applicationContext
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
+        val context: Context = activity
 
         fragment.view?.post {
             width = fragment.requireView().width/2

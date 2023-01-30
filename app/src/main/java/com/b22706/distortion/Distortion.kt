@@ -15,11 +15,13 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.sin
 
 
-class Distortion(): ImageAnalysis.Analyzer {
+class Distortion(audioSensor: AudioSensor): ImageAnalysis.Analyzer {
 
     companion object {
         val LOG_NAME: String = "Distortion"
     }
+
+    val audioSensor = audioSensor
 
     // 出力する画像
     private val _image =
@@ -31,7 +33,10 @@ class Distortion(): ImageAnalysis.Analyzer {
         try {
             val mat = imageProxyToMat(image)
             val rMat = fixMatRotation(mat)
-            val dstMat = distortImage(rMat, 5)
+            // 音量によって画像処理，音が一定以下なら何もしない．
+            val dstMat = if (getDistortionLevel(audioSensor.getVolume()) != 0) {
+                distortImage(rMat, getDistortionLevel(audioSensor.getVolume()))
+            } else { rMat }
             val bitmap = dstMat.toBitmap()
 
             _image.postValue(bitmap)
@@ -63,6 +68,11 @@ class Distortion(): ImageAnalysis.Analyzer {
         Imgproc.remap(image, result, mapX, mapY, Imgproc.INTER_LINEAR, Core.BORDER_CONSTANT, Scalar.all(0.0))
 
         return result
+    }
+
+    fun getDistortionLevel(volume: Int) :Int {
+        return if (volume <= 70) { 0 }
+        else { (volume-70)/3 }
     }
 
     private fun fixMatRotation(matOrg: Mat): Mat {
