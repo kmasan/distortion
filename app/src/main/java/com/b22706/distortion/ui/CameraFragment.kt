@@ -28,20 +28,6 @@ class CameraFragment : Fragment() {
         CameraViewModelFactory((requireActivity() as MainActivity))
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val permissions = arrayOf(
-                Manifest.permission.CAMERA
-            )
-
-        if (!EasyPermissions.hasPermissions(requireActivity(), *permissions)) {
-            // パーミッションが許可されていない時の処理
-            EasyPermissions.requestPermissions(requireActivity(), "パーミッションに関する説明", 0, *permissions)
-            return
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,6 +48,11 @@ class CameraFragment : Fragment() {
                 binding.imageView.setImageBitmap(it)
             })
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cameraViewModel.startAudio()
     }
 
     override fun onPause() {
