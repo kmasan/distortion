@@ -26,7 +26,8 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         // 権限確認
         val permissions = arrayOf(
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         if (!EasyPermissions.hasPermissions(this, *permissions)) {
             // パーミッションが許可されていない時の処理

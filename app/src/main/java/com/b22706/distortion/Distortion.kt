@@ -11,17 +11,18 @@ import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.core.Point
 import org.opencv.imgproc.Imgproc
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 import kotlin.math.sin
 
 
-class Distortion(audioSensor: AudioSensor): ImageAnalysis.Analyzer {
+class Distortion(val audioSensor: AudioSensor): ImageAnalysis.Analyzer {
 
     companion object {
         val LOG_NAME: String = "Distortion"
+        const val volumeThreshold: Int = 70
     }
-
-    val audioSensor = audioSensor
 
     // 出力する画像
     private val _image =
@@ -33,19 +34,42 @@ class Distortion(audioSensor: AudioSensor): ImageAnalysis.Analyzer {
         try {
             val mat = imageProxyToMat(image)
             val rMat = fixMatRotation(mat)
+            Log.d(LOG_NAME,"audio db = ${audioSensor.getVolume()}")
+            Log.d(LOG_NAME, "distortionLevel = ${getDistortionLevel(audioSensor.getVolume())}")
             // 音量によって画像処理，音が一定以下なら何もしない．
-            val dstMat = if (getDistortionLevel(audioSensor.getVolume()) != 0) {
-                distortImage(rMat, getDistortionLevel(audioSensor.getVolume()))
-            } else { rMat }
-            val bitmap = dstMat.toBitmap()
+            shouldDistortImage(rMat.clone())
 
+            val bitmap = rMat.toBitmap()
             _image.postValue(bitmap)
         } finally {
             image.close()
         }
     }
 
-    fun distortImage(image: Mat, strength: Int): Mat {
+    private fun shouldDistortImage(mat: Mat) {
+        if (getDistortionLevel(audioSensor.getVolume()) != 0 && toggleBoolean()){
+            thread {
+                val dstMat = distortImage(mat, getDistortionLevel(audioSensor.getVolume()))
+                ImageManager.saveImage(
+                    "level${getDistortionLevel(audioSensor.getVolume())}",
+                    dstMat.toBitmap()
+                )
+            }
+        }
+    }
+
+    private fun toggleBoolean(): Boolean {
+        var value = true
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                value = !value
+            }
+        }, 1000)
+        return value
+    }
+
+    private fun distortImage(image: Mat, strength: Int): Mat {
+        Log.d(LOG_NAME, "start distort")
         val result = Mat()
         val mapX = Mat()
         val mapY = Mat()
@@ -54,6 +78,7 @@ class Distortion(audioSensor: AudioSensor): ImageAnalysis.Analyzer {
         mapX.create(size, CvType.CV_32FC1)
         mapY.create(size, CvType.CV_32FC1)
 
+        Log.d(LOG_NAME, "start Double for loop")
         for (i in 0 until image.rows()) {
             for (j in 0 until image.cols()) {
                 val x = j.toDouble()
@@ -64,15 +89,17 @@ class Distortion(audioSensor: AudioSensor): ImageAnalysis.Analyzer {
                 mapY.put(i, j, dy)
             }
         }
+        Log.d(LOG_NAME, "end Double for loop")
 
         Imgproc.remap(image, result, mapX, mapY, Imgproc.INTER_LINEAR, Core.BORDER_CONSTANT, Scalar.all(0.0))
-
+        Log.d(LOG_NAME, "end distort")
         return result
     }
 
+
     fun getDistortionLevel(volume: Int) :Int {
-        return if (volume <= 70) { 0 }
-        else { (volume-70)/3 }
+        return if (volume <= volumeThreshold) { 0 }
+        else { (volume-volumeThreshold)/3 }
     }
 
     private fun fixMatRotation(matOrg: Mat): Mat {
@@ -98,8 +125,7 @@ class Distortion(audioSensor: AudioSensor): ImageAnalysis.Analyzer {
         return mat
     }
 
-    fun imageProxyToMat(image: ImageProxy): Mat {
-        Log.d(LOG_NAME,"${image.format}")
+    private fun imageProxyToMat(image: ImageProxy): Mat {
         val yuvType = Imgproc.COLOR_YUV2BGR_NV21
         val mat = Mat(image.height + image.height / 2, image.width, CvType.CV_8UC1)
         val data = ByteArray(image.planes[0].buffer.capacity() + image.planes[1].buffer.capacity())
@@ -111,7 +137,7 @@ class Distortion(audioSensor: AudioSensor): ImageAnalysis.Analyzer {
         return matRGBA
     }
 
-    fun Mat.toBitmap(): Bitmap {
+    private fun Mat.toBitmap(): Bitmap {
         val bmp = Bitmap.createBitmap(cols(), rows(), Bitmap.Config.ARGB_8888)
         Utils.matToBitmap(this, bmp)
         return bmp
