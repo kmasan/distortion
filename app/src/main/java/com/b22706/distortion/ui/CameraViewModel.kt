@@ -25,7 +25,7 @@ class CameraViewModel(activity: MainActivity) : ViewModel() {
     }
     val activity: MainActivity = activity
     val audioSensor: AudioSensor = AudioSensor(activity)
-    val distortion: Distortion = Distortion(audioSensor)
+    val distortion: Distortion = Distortion(audioSensor, activity)
 
     var width: Int = 1920
     var height: Int = 1444

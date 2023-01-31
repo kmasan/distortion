@@ -1,8 +1,12 @@
 package com.b22706.distortion
 
+import android.content.Context
 import android.graphics.*
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Surface
+import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.LiveData
@@ -17,7 +21,7 @@ import kotlin.concurrent.thread
 import kotlin.math.sin
 
 
-class Distortion(val audioSensor: AudioSensor): ImageAnalysis.Analyzer {
+class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnalysis.Analyzer {
 
     companion object {
         val LOG_NAME: String = "Distortion"
@@ -59,6 +63,10 @@ class Distortion(val audioSensor: AudioSensor): ImageAnalysis.Analyzer {
                     "level${level}",
                     dstMat.toBitmap()
                 )
+                val handler = Handler(Looper.getMainLooper())
+                handler.post {
+                    Toast.makeText(context, "level${level}を保存しました", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
