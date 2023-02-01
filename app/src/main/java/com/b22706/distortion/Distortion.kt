@@ -19,7 +19,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.math.sin
-
+import org.opencv.core.Core
 
 class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnalysis.Analyzer {
 
@@ -34,17 +34,19 @@ class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnaly
     val image: LiveData<Bitmap> = _image
     private var willDistortion: Boolean = true
     private var timeStamp = System.currentTimeMillis()
+    private var effectLevelArray: Array<Int> = arrayOf(0,3,5,4,2,1)
+    private var whiteEffectNum: Int = 0
 
     // ここに毎フレーム画像が渡される
     override fun analyze(image: ImageProxy) {
         try {
             val mat = imageProxyToMat(image)
-            val rMat = fixMatRotation(mat)
+            var rMat = fixMatRotation(mat)
 //            Log.d(LOG_NAME,"audio db = ${audioSensor.getVolume()}")
 //            Log.d(LOG_NAME, "distortionLevel = ${getDistortionLevel(audioSensor.getVolume())}")
             // 音量によって画像処理，音が一定以下なら何もしない．
-            shouldDistortImage(rMat.clone())
-
+            val wasSave = shouldDistortImage(rMat.clone())
+            if (wasSave || whiteEffectNum != 0) rMat = whiteEffect(rMat)
             val bitmap = rMat.toBitmap()
             _image.postValue(bitmap)
         } finally {
@@ -52,10 +54,11 @@ class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnaly
         }
     }
 
-    private fun shouldDistortImage(mat: Mat) {
+    private fun shouldDistortImage(mat: Mat): Boolean {
         val level = getDistortionLevel(audioSensor.getVolume())
         if (level != 0 && toggleBoolean()){
             thread {
+                ImageManager.saveImage("noDistort",mat.toBitmap())
                 Log.d(LOG_NAME, "save image")
                 val dstMat = distortImage(mat, level)
                 Log.d(LOG_NAME, "created dstImage")
@@ -65,10 +68,13 @@ class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnaly
                 )
                 val handler = Handler(Looper.getMainLooper())
                 handler.post {
-                    Toast.makeText(context, "level${level}を保存しました", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Pictures/distortionに\n歪みレベル${level}を保存しました", Toast.LENGTH_SHORT).show()
                 }
+                Log.d(LOG_NAME, "画像を保存")
             }
+            return true
         }
+        return false
     }
 
     private fun toggleBoolean(): Boolean {
@@ -86,6 +92,7 @@ class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnaly
         }
     }
 
+    // 画像を歪ませる 歪ませ度はstrength 1~255まで入るが10前後がいい感じ
     private fun distortImage(image: Mat, strength: Int): Mat {
         Log.d(LOG_NAME, "start distort")
         val result = Mat()
@@ -114,12 +121,33 @@ class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnaly
         return result
     }
 
-
+    // 音量によって画像の歪ませ度を計算
     fun getDistortionLevel(volume: Int) :Int {
         return if (volume <= volumeThreshold) { 0 }
-        else { (volume-volumeThreshold)/3 }
+        else { (volume-volumeThreshold)/2 }
     }
 
+    // 画像を保存する時，フラッシュみたいのを表示する．
+    fun whiteEffect(input: Mat): Mat {
+        Log.d(LOG_NAME, "effect ${effectLevelArray[whiteEffectNum]}")
+        whiteEffectNum++
+        if (whiteEffectNum >= 5) {
+            whiteEffectNum = 0
+            return input
+        }
+        return whiteOutImageFast(input, effectLevelArray[whiteEffectNum])
+    }
+
+    // 画像と数字を入力すると画像を白くする．Intには1~5を入力する．
+    fun whiteOutImageFast(src: Mat, level: Int): Mat {
+        val whiteLevel = ((255 / 5) * level).toDouble()
+        val dst = Mat(src.rows(), src.cols(), CvType.CV_8UC3)
+        val whiteScalar = Scalar(whiteLevel, whiteLevel, whiteLevel)
+        Core.max(src, whiteScalar, dst)
+        return dst
+    }
+
+    // なんか知らないけど画像が回転するからその補正
     private fun fixMatRotation(matOrg: Mat): Mat {
         val mat: Mat
         val rotation: Int = Surface.ROTATION_0
@@ -142,7 +170,6 @@ class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnaly
         }
         return mat
     }
-
     private fun imageProxyToMat(image: ImageProxy): Mat {
         val yuvType = Imgproc.COLOR_YUV2BGR_NV21
         val mat = Mat(image.height + image.height / 2, image.width, CvType.CV_8UC1)
