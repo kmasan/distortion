@@ -37,7 +37,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onPermissionsGranted(requestCode: Int, list: List<String>) {
         // ユーザーの許可が得られたときに呼び出される
         // 初回起動時(未許可)だとAudioSensorのRecordが動いてないので再起動
-        recreate()
+        if (EasyPermissions.hasPermissions(
+                this,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CAMERA
+            )) recreate()
     }
 
     override fun onPermissionsDenied(requestCode: Int, list: List<String>) {
