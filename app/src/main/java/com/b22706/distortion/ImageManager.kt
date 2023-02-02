@@ -10,7 +10,7 @@ import java.util.*
 
 class ImageManager {
     companion object {
-        val LOG_NAME = "ImageManager"
+        const val LOG_NAME = "ImageManager"
         fun saveImage(imageName: String, image: Bitmap) {
             Log.d(LOG_NAME,"save Image")
             Log.d(LOG_NAME,imageName)

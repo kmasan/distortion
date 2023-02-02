@@ -33,6 +33,7 @@ class AudioSensor(private val context: Context) {
     )
     lateinit var audioRecord: AudioRecord
     private var buffer:ShortArray = ShortArray(bufferSize)
+    fun getBuffer() = buffer
 
     private var isRecoding: Boolean = false
     private var run: Boolean = false

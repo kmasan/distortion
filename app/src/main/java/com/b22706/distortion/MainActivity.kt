@@ -2,6 +2,7 @@ package com.b22706.distortion
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -21,31 +22,44 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d(LOG_NAME, OpenCVLoader.OPENCV_VERSION)
+        //Log.d(LOG_NAME, OpenCVLoader.OPENCV_VERSION)
 
         // 権限確認
-        val permissions = arrayOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA
-        )
+        val permissions = when{
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA
+                )
+            else ->
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+        }
         if (!EasyPermissions.hasPermissions(this, *permissions)) {
             // パーミッションが許可されていない時の処理
-            EasyPermissions.requestPermissions(this, "パーミッションに関する説明", 0, *permissions)
+            EasyPermissions.requestPermissions(this, "パーミッションを許可してください", 0, *permissions)
         }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
     override fun onPermissionsGranted(requestCode: Int, list: List<String>) {
         // ユーザーの許可が得られたときに呼び出される
-        // 初回起動時(未許可)だとAudioSensorのRecordが動いてないので再起動
-        if (EasyPermissions.hasPermissions(
-                this,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.CAMERA
-            )) recreate()
     }
 
     override fun onPermissionsDenied(requestCode: Int, list: List<String>) {
         // ユーザーの許可が得られなかったときに呼び出される。
+        finish()
     }
 
     private val mLoaderCallback: BaseLoaderCallback = object : BaseLoaderCallback(this) {

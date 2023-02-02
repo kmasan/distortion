@@ -16,7 +16,7 @@ import pub.devrel.easypermissions.EasyPermissions
 class CameraFragment : Fragment() {
 
     companion object {
-        val LOG_NAME = "CameraFragment"
+        const val LOG_NAME = "CameraFragment"
     }
 
     private var _binding: FragmentCameraBinding? = null
@@ -44,9 +44,9 @@ class CameraFragment : Fragment() {
         cameraViewModel.startCamera(this)
 
         cameraViewModel.distortion.image.observe(viewLifecycleOwner){
-            activity.runOnUiThread(Runnable {
+            activity.runOnUiThread {
                 binding.imageView.setImageBitmap(it)
-            })
+            }
         }
     }
 

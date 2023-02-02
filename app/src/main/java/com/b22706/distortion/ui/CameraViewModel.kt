@@ -1,5 +1,6 @@
 package com.b22706.distortion.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.util.Size
@@ -18,12 +19,11 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class CameraViewModel(activity: MainActivity) : ViewModel() {
+class CameraViewModel(@field:SuppressLint("StaticFieldLeak") val activity: MainActivity) : ViewModel() {
 
     companion object {
-        val LOG_NAME: String = "CameraViewModel"
+        const val LOG_NAME: String = "CameraViewModel"
     }
-    val activity: MainActivity = activity
     val audioSensor: AudioSensor = AudioSensor(activity)
     val distortion: Distortion = Distortion(audioSensor, activity)
 

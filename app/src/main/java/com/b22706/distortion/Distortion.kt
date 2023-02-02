@@ -21,10 +21,10 @@ import kotlin.concurrent.thread
 import kotlin.math.sin
 import org.opencv.core.Core
 
-class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnalysis.Analyzer {
+class Distortion(val audioSensor: AudioSensor, private val context: Context): ImageAnalysis.Analyzer {
 
     companion object {
-        val LOG_NAME: String = "Distortion"
+        const val LOG_NAME: String = "Distortion"
         const val volumeThreshold: Int = 70
     }
 
@@ -39,18 +39,16 @@ class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnaly
 
     // ここに毎フレーム画像が渡される
     override fun analyze(image: ImageProxy) {
-        try {
+        image.use {
             val mat = imageProxyToMat(image)
             var rMat = fixMatRotation(mat)
-//            Log.d(LOG_NAME,"audio db = ${audioSensor.getVolume()}")
-//            Log.d(LOG_NAME, "distortionLevel = ${getDistortionLevel(audioSensor.getVolume())}")
+            //            Log.d(LOG_NAME,"audio db = ${audioSensor.getVolume()}")
+            //            Log.d(LOG_NAME, "distortionLevel = ${getDistortionLevel(audioSensor.getVolume())}")
             // 音量によって画像処理，音が一定以下なら何もしない．
             val wasSave = shouldDistortImage(rMat.clone())
             if (wasSave || whiteEffectNum != 0) rMat = whiteEffect(rMat)
             val bitmap = rMat.toBitmap()
             _image.postValue(bitmap)
-        } finally {
-            image.close()
         }
     }
 
@@ -86,9 +84,9 @@ class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnaly
         }
         return if (willDistortion){
             willDistortion = false
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
@@ -150,8 +148,7 @@ class Distortion(val audioSensor: AudioSensor, val context: Context): ImageAnaly
     // なんか知らないけど画像が回転するからその補正
     private fun fixMatRotation(matOrg: Mat): Mat {
         val mat: Mat
-        val rotation: Int = Surface.ROTATION_0
-        when (rotation) {
+        when (Surface.ROTATION_0) {
             Surface.ROTATION_0 -> {
                 mat = Mat(matOrg.cols(), matOrg.rows(), matOrg.type())
                 Core.transpose(matOrg, mat)
