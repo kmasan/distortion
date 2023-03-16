@@ -24,6 +24,7 @@ class AudioSensor(private val context: Context) {
         const val RECORDING_NORMAL = 0 // 特に処理はしない
         const val RECORDING_DB = 1 // volumeに音量を記載
         const val RECORDING_FREQUENCY = 2 // 周波数解析
+        const val RECORDING_DB_AND_FREQUENCY = 3 // 周波数解析
     }
 
     private val sampleRate = 8000 // 標準：44100
@@ -38,8 +39,11 @@ class AudioSensor(private val context: Context) {
     private var isRecoding: Boolean = false
     private var run: Boolean = false
 
-    private var volume = 0
-    fun getVolume() = volume
+    var volume = 0
+    private set
+    var voice = 0
+    private set
+
 
     // period: オーディオ処理のインターバル, recordingMode: 処理の種類（定数として宣言済み）
     fun start(period: Int, recordingMode: Int) {
@@ -64,6 +68,7 @@ class AudioSensor(private val context: Context) {
             RECORDING_NORMAL -> recoding(period)
             RECORDING_DB -> recodingDB(period)
             RECORDING_FREQUENCY -> recodingFrequency(period)
+            RECORDING_DB_AND_FREQUENCY -> recodingDBAndFrequency(period)
         }
     }
 
@@ -154,7 +159,18 @@ class AudioSensor(private val context: Context) {
                 }
                 // 最大振幅の周波数
                 val maxFrequency: Int = (maxIndex * sampleRate / fftBuffer.size)
-                //Log.d(LOG_NAME, "maxFrequency = $maxFrequency")
+                Log.d(LOG_NAME, "maxFrequency = $maxFrequency")
+
+                // 最大振幅の周波数をレベルに変換（0~10）
+                val minVoice = 100 // レベル1とする最低周波数
+                val maxVoice = 1000 // レベル10とする最大周波数
+                val levelInterval = (maxVoice - minVoice)/10 // レベルの間隔
+                val voiceLevel: Int = (maxFrequency - minVoice)/ levelInterval // レベルに変換
+                voice = when{
+                    voiceLevel < 0 -> 0
+                    voiceLevel > 10 -> 10
+                    else -> voiceLevel
+                }
 
                 // stop用のフラグ
                 if (run) {
@@ -164,6 +180,53 @@ class AudioSensor(private val context: Context) {
             }
         }
         // 初回の呼び出し
+        hnd0.post(rnb0)
+    }
+
+    // デシベル変換したやつを出力
+    private fun recodingDBAndFrequency(period: Int) {
+        val hnd0 = Handler(Looper.getMainLooper())
+        run = true
+        val rnb0 = object : Runnable {
+            override fun run() {
+                var bufferReadResult = audioRecord.read(buffer,0,bufferSize)
+
+                // 最大音量を解析
+                val sum = buffer.sumOf { it.toDouble() * it.toDouble() }
+                val amplitude = sqrt(sum / bufferSize)
+                // デシベル変換
+                val db = (20.0 * log10(amplitude)).toInt()
+                volume = db
+                //Log.d(LOG_NAME,"db = $db")
+
+                // 最大の周波数解析
+                // FFT 結果はfftBufferに入る
+                val fft = DoubleFFT_1D(bufferSize.toLong())
+                val fftBuffer = DoubleArray(bufferSize * 2)
+                val doubleBuffer: DoubleArray = buffer.map { it.toDouble() }.toDoubleArray()
+                System.arraycopy(doubleBuffer, 0, fftBuffer, 0, bufferSize)
+                fft.realForward(fftBuffer)
+
+                //振幅が最大の周波数とその振幅値の解析
+                var maxAmplitude = 0.0 // 最大振幅
+                var maxIndex = 0 // 最大振幅が入っているリスト番号
+                // 最大振幅が入っているリスト番号を走査
+                for(index in IntStream.range(0, fftBuffer.size - 1)){
+                    val tmp = sqrt((fftBuffer[index] * fftBuffer[index] + fftBuffer[index + 1] * fftBuffer[index + 1]))
+                    if (maxAmplitude < tmp){
+                        maxAmplitude = tmp
+                        maxIndex = index
+                    }
+                }
+                // 最大振幅の周波数
+                val maxFrequency: Int = (maxIndex * sampleRate / fftBuffer.size)
+                Log.d(LOG_NAME, "amplitude = $amplitude, $maxAmplitude maxFrequency = $maxFrequency")
+
+                if (run) {
+                    hnd0.postDelayed(this, period.toLong())
+                }
+            }
+        }
         hnd0.post(rnb0)
     }
 

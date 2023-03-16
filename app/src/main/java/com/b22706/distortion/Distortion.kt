@@ -53,7 +53,7 @@ class Distortion(val audioSensor: AudioSensor, private val context: Context): Im
     }
 
     private fun shouldDistortImage(mat: Mat): Boolean {
-        val level = getDistortionLevel(audioSensor.getVolume())
+        val level = getDistortionLevel(audioSensor.volume)
         if (level != 0 && toggleBoolean()){
             thread {
                 ImageManager.saveImage("noDistort",mat.toBitmap())
